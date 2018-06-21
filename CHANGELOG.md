@@ -2,15 +2,48 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- PNDA-4560: Provide identity to all deployment manager operations
+
+### Changed
+- PNDA-4042: Sort application properties alphabetically
+- PNDA-4546: Pass user to Deployment Manager APIs as a URL parameter instead of in the body
+- PNDA-4613: Rename user parameter for deployment manager API from user to user.name to match the default knox behaviour
+
+### Fixed
+- PNDA-4190: Set help link for cluster manager based on the hadoop distro in use
+- PNDA-4431: Add basic console elements to represent Flink in PNDA
+- PNDA-4012: Add application type in application summary view
+- PNDA-4009: Better status naming in application detailed summary view
+- PNDA-4234: Fix hive query cog link for HDP clusters
+- PNDA-4133: Detect lack of health metric updates based on a timer rather than the absolute time to avoid the client clock having to match the server side
+- PNDA-4019: Prevent loss of progress in the create application workflow when another application finishes deleting
+- PNDA-4650: Fix expand and collapse for app property
+
+## [1.0.0] 2018-02-10
+### Added
+- PNDA-439: Support deploying/running app as specific user
+- PNDA-2834: Added pop-up for displaying status of each sub-component of each application on applications page.
+- PNDA-3562: Add PAM authentication
+- PNDA-3100: Organize Kafka topics especially when there are a lot of topics
+
+### Changed
+- PNDA-3601: Disable emailtext in Jenkins file and replace it with notifier stage and job
+- PNDA-3596: Review authentication since passportjs used in console backend
+
+### Fixed
+- PNDA-3609: Back to login if authentication failed / browser restart
+- PNDA-3622: Stop the build if a command failed
 
 ## [0.2.1] 2017-11-24
-### Fixed:
+### Fixed
 - ISSUE-45: Added UI for opentsdb component with info, help, settings icons and color code for health status in console homepage.
-### Added:
+### Added
 - PNDA-2445: Support for Hortonworks HDP
+- PNDA-439: When creating an application the user to run the application as is now a required field in the form.
 
 ## [0.2.0] 2017-06-29
-### Added:
+### Added
 - PNDA-2691: Refactor for offline installation
 ### Changed
 - PNDA-2827: Changed the display of the application metrics to lose the filter info.

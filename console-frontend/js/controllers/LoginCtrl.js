@@ -27,10 +27,17 @@
 angular.module('login').controller('LoginCtrl', ['$scope', '$http', '$location', '$rootScope', '$cookies', '$window',
   'ConfigService', function($scope, $http, $location, $rootScope, $cookies, $window, ConfigService) {
 
+    var loginPath;
+    if (ConfigService.login_mode === 'PAM') {
+      loginPath = '/pam/login';
+    }
+	document.getElementById("username").focus();
+	
+    var dataMan = ConfigService.backend["data-manager"];
+    var host = dataMan.host;
+    var port = dataMan.port;
+
     $scope.login = function() {
-      var dataMan = ConfigService.backend["data-manager"];
-      var host = dataMan.host;
-      var port = dataMan.port;
 
       var data = $.param({
         username: $scope.username,
@@ -38,22 +45,20 @@ angular.module('login').controller('LoginCtrl', ['$scope', '$http', '$location',
       });
 
       $http({
-        url: 'http://' + host + ':' + port + '/login/validate',
+        url: loginPath,
         method: 'POST',
         data: data,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function successCallback(response) {
-        if (response.data.success) {
-          var authdata = Base64.encode($scope.username);
+        if (response.data.username) {
+          var authdata = Base64.encode($scope.username + ':' + $scope.password);
           $rootScope.globals = {
             currentUser: {
               username: $scope.username,
               authdata: authdata
             }
           };
-
-          // $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata;
 
           // add to cookies
           var expireDate = new Date();
@@ -62,22 +67,19 @@ angular.module('login').controller('LoginCtrl', ['$scope', '$http', '$location',
           $cookies.put('user', $scope.username, { expires: expireDate });
           $cookies.put('userRole', response.data.role, { expires: expireDate });
           $cookies.put('globals', $rootScope.globals, { expires: expireDate });
-
           $location.url("/");
-
         } else {
           // user not present or invalid credentials
           $scope.loginError = "Invalid username/password combination";
           $scope.result = 'error';
           console.log('Login failed');
-
           $('.alert').show();
         }
-      }, function errorCallback(response) {
-        // failed to connect to the console backend
-        $scope.loginError = response.data || "Request failed." + "\n";
-        $scope.loginError += " Failed to connect to the console backend.";
-
+      }, function errorCallback() {
+        // user not present or invalid credentials
+        $scope.loginError = "Invalid username/password combination.";
+        $scope.result = 'error';
+        console.log('Login failed');
         $('.alert').show();
       });
     };
@@ -94,19 +96,29 @@ angular.module('login').controller('LoginCtrl', ['$scope', '$http', '$location',
   }]
 );
 
-angular.module('logout').controller('LogoutCtrl', function($scope, $http, $location, $rootScope, $cookies) {
+angular.module('logout')
+  .controller('LogoutCtrl', function($scope, $http, $location, $rootScope, $cookies, $window, ConfigService) {
 
-  // remove cookie data and logout user
-  $rootScope.globals = {};
+    var logoutPath;
+    if (ConfigService.login_mode === 'PAM') {
+      logoutPath = '/pam/logout';
+    }
 
-  $cookies.remove('globals');
-  $cookies.remove('userLoggedIn');
-  $cookies.remove('user');
-  $cookies.remove('userRole');
+    // remove cookie data and logout user
+    $rootScope.globals = {};
+
+    $cookies.remove('globals');
+    $cookies.remove('userLoggedIn');
+    $cookies.remove('user');
+    $cookies.remove('userRole');
+    $http({
+    url: logoutPath,
+    method: 'GET'
+  });
 
   // custom jquery to remove navbar dropdown
-  $("#navWelcomeText").text('');
-  $(".role").remove();
-  $location.url("/login");
+    $("#navWelcomeText").text('');
+    $(".role").remove();
+    $location.url("/login");
   
-});
+  });

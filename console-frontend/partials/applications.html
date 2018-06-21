@@ -89,7 +89,9 @@
                         </tr>
                         <tr>
                           <th>Status</th>
-                          <td>{{ fullApplicationDetail.status | changeAppStatusForDisplay }}</td>
+                          <td>{{ fullApplicationDetail.status | changeAppStatusForDisplay }}
+                           <span> <button type="button" class="btn btn-link" ng-click="showInfoModal(fullApplicationDetail.name)">More info</button></span>
+                          </td>
                         </tr>
                       </table>
                     </div>
@@ -145,6 +147,12 @@
                           <div class="alert alert-danger top-right">
                             <a class="close" ng-click="dismissAppSubmitErrorAlert()" aria-hidden="true">&times;</a>
                             {{ appNameErrorText }}
+                          </div>
+                        </div>
+                        <div ng-if="userNameError">
+                          <div class="alert alert-danger top-right">
+                            <a class="close" ng-click="dismissAppSubmitErrorAlert()" aria-hidden="true">&times;</a>
+                            {{ userNameErrorText }}
                           </div>
                         </div>
                         <div ng-if="submitAppResponse">
